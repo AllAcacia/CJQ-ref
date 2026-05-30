@@ -27,6 +27,7 @@
 #include <arpa/inet.h>
 
 #include <3ds.h>
+#include "gamestate.h"
 
 #define SOC_ALIGN       0x1000
 #define SOC_BUFFERSIZE  0x100000

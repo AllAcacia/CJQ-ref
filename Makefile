@@ -36,7 +36,7 @@ BUILD		:=	build
 SOURCES		:=	src
 DATA		:=	data
 INCLUDES	:=	inc
-GRAPHICS	:=	gfx
+GRAPHICS	:=	assets
 # GFXBUILD	:=	$(BUILD)
 ROMFS		:=	romfs
 GFXBUILD	:=	$(ROMFS)/gfx
@@ -69,7 +69,7 @@ LIBS	:= -lcitro2d -lcitro3d -lctru -lvorbisidec -logg -lm
 3DSLINK := 3dslink
 3DSLINK_FLAGS := -s -a
 3DSLINK_PORT := 17491
-3DSIP_ADDR ?= 192.168.0.0
+IP ?= 192.168.0.0
 
 #---------------------------------------------------------------------------------
 
@@ -172,7 +172,7 @@ ifneq ($(ROMFS),)
 	export _3DSXFLAGS += --romfs=$(CURDIR)/$(ROMFS)
 endif
 
-.PHONY: all clean boot dualboot
+.PHONY: all clean boot
 
 #---------------------------------------------------------------------------------
 all: $(BUILD) $(GFXBUILD) $(DEPSDIR) $(ROMFS_T3XFILES) $(T3XHFILES)
@@ -197,10 +197,10 @@ clean:
 	@rm -fr $(BUILD) $(TARGET).3dsx $(OUTPUT).smdh $(TARGET).elf $(GFXBUILD)
 
 #---------------------------------------------------------------------------------
-# REMEMBER TO REASSIGN 3DSIP_ADDR, read from command line
+# REMEMBER TO REASSIGN IP, read from command line
 boot: all
 	@echo "Booting to 3DS..."
-	$(3DSLINK) $(3DSLINK_FLAGS) $(3DSIP_ADDR) $(TARGET).3dsx
+	$(3DSLINK) $(3DSLINK_FLAGS) $(IP) $(TARGET).3dsx
 #---------------------------------------------------------------------------------
 $(GFXBUILD)/%.t3x	$(BUILD)/%.h	:	%.t3s
 #---------------------------------------------------------------------------------

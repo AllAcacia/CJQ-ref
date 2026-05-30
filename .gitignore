@@ -41,6 +41,8 @@
 *.dwo
 
 # other
+*.ttf
+*.otf
 *.json
 *.lst
 *.elf
@@ -48,6 +50,5 @@
 *.smdh
 *.map
 *.t3x
+*.ogg
 /build/
-/romfs/gfx
-/romfs/sfx

@@ -23,6 +23,17 @@ int StickBug_Launch(void)
 	GS_SetFrameTickPrv(svcGetSystemTick()); // set reference for tick
 	GS_ResetFrameTickNet();
 
+	// Set up string and textbuffer
+	char* hello_str;
+	CJQ_RendText hello_txt;
+	u8* username = GS_GetUsername_UTF8();
+	hello_str = malloc(sizeof(char)*(6 + USERNAME_LEN_MAX*UTF8_PER_UTF16_CMN));
+	strcpy(hello_str, "Hello ");
+	memcpy(&hello_str[6], (char*)username, sizeof(char)*USERNAME_LEN_MAX*UTF8_PER_UTF16_CMN);
+	SprCJQ_RendText_Init(&hello_txt, TOP_SCREEN, hello_str, TxtBuf_STATIC, C2D_AlignCenter | C2D_AtBaseline | C2D_WithColor, NULL, (float)TOP_SCREEN_WIDTH/2, (float)TOP_SCREEN_HEIGHT/2, 1.0f, C2D_WHITE);
+	printf("Prepared string [%s]\n", hello_str);
+	RendCORE_TxtLyr_AppendText(&hello_txt);
+
 	RendCORE_LoadingScreen_Hide(); // Hide Loading Screen
 	VorbisFileData sblol_aud = AuraCORE_VorbisOpen(AUDIO_PATH_SBLOL);
 	VorbisPlayback* aud_slot = AuraCORE_AudioAppend(&sblol_aud);
@@ -80,6 +91,8 @@ int StickBug_Launch(void)
 	AuraCORE_StopAllPlayback();
 	AuraCORE_VorbisClose(&sblol_aud);
 	StickBug_Sprite_Free(&sblol);
+	free(hello_str);
+	RendCORE_TxtLyr_DeleteText(&hello_txt);
 
 	printf("Exiting Stickbug...\n");
 
@@ -101,7 +114,7 @@ void StickBug_Sprite_Init(StickBug_Sprite* obj)
 
 	obj->rate_ticks = GS_GetTickDelay_hz(SBLOL_RATE_HZ);
 	
-	SprCJQ_RenderSprite_Init(&(obj->sblol_spr), BOT_SCREEN, RendLayer_BACKGND, 0);
+	SprCJQ_RendSprite_Init(&(obj->sblol_spr), BOT_SCREEN, RendLayer_BACKGND, 0);
 	C2D_SpriteFromSheet(&(obj->sblol_spr.c2d_spr), obj->sheet_1, 0); // take first frame
 	RendCORE_SprLyr_AppendSprite(&(obj->sblol_spr));
 }

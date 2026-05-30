@@ -12,6 +12,8 @@
 #include <3ds.h>
 #include <citro2d.h>
 #include <limits.h>
+#include <stdlib.h>
+#include <locale.h>
 
 #define REFRESH_RATE_HZ 60
 #define SIMUL_RATE_HZ 60
@@ -29,6 +31,14 @@
 #define BOTTOM_SCREEN_HEIGHT 240
 #define MAX_SIMUL_STEPS 3 // prevents overloading the simulation loop
 
+#define CFG_USERNAME_BLKSIZE 0x1C     // Number of bytes of blk
+#define CFG_USERNAME_BLKID 0x000A0000 // Blk memory region in CFG Savegame
+#define USERNAME_LEN_MAX 10           // # of UTF-16 characters
+#define UTF8_PER_UTF16_MAX 4          // Usually spans 1-4 bytes: 1B for ASCII, 2B for accented chars, 3B for many foreign characters, 4B for emojis and anything else.
+#define UTF8_PER_UTF16_CMN 3          // Common number of bytes to represent most required characters in UTF-8.
+
+#define ENABLE_3DSLINKIO 1 // used for when you want to initialise NetCORE, as there are conflicts between it and 3dslink
+
 
 typedef enum {
 	MODE_MENU=0, // Menu
@@ -40,7 +50,23 @@ typedef enum {
 } CJQ_GameState;
 
 
-void GS_Init(void);
+int GS_Init(void);
+
+int GS_Exit(void);
+
+int GS_ExtractUsernameFromCFGU(void);
+
+void GS_Username_UTF16toUTF8(u8* usr_8, u16* usr_16);
+
+u64 GS_GetApplicationID(void);
+
+u8* GS_GetUsername_UTF8(void);
+
+u16* GS_GetUsername_UTF16(void);
+
+void GS_PrintAsHex_UTF8(u8* obj);
+
+void GS_PrintAsHex_UTF16(u16* obj);
 
 void GS_DelayTicks(size_t tick_delay);
 

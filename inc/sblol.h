@@ -31,7 +31,7 @@
 
 
 typedef struct {
-    CJQ_RenderSprite sblol_spr;
+    CJQ_RendSprite sblol_spr;
     C2D_SpriteSheet sheet_1;
 	C2D_SpriteSheet sheet_2;
 	C2D_SpriteSheet sheet_3;

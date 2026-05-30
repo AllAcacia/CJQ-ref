@@ -15,7 +15,7 @@ static size_t CARD_COLLECTION_BYTE_CNT = 0;
 
 int Cards_LoadDatabase(void)
 {
-    printf("Attempting to load cards into database...\n");
+    printf("Loading cards into database...\n");
 
     if (CARD_COLLECTION != NULL) {
         return EXIT_FAILURE; // if database already is loaded

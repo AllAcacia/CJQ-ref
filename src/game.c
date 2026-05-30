@@ -21,16 +21,19 @@ int main(int argc, char *argv[])
 	C2D_Init(C2D_DEFAULT_MAX_OBJECTS);
 	C2D_Prepare();
 
-	// Initialize CJQ module libs
+	// Debug module init
 	Debug_Init();    // Connection via 3dslink
-	GS_Init();       // General game_state stuff
-	RendCORE_Init(); // Sprite + scene layer manager
-	AuraCORE_Init(); // Audio manager
 
 	// Load Card Database
 	Cards_LoadDatabase();
 
-	printf("Initialised all modules\n");
+	// Initialize CJQ module libs
+	GS_Init();       // General game_state stuff
+	RendCORE_Init(); // Sprite + scene layer manager
+	AuraCORE_Init(); // Audio manager
+	NetCORE_Init();  // Network manager
+
+	printf("Initialised all modules for %s\n", (char*)GS_GetUsername_UTF8());
 
 	CJQ_MainMenuAssets main_menu_assets;
 	CJQ_MainMenuAssets_Init(&main_menu_assets);
@@ -56,9 +59,12 @@ int main(int argc, char *argv[])
 	CJQ_MainMenuAssets_Free(&main_menu_assets);
 
 	printf("Attempting to exit all modules...\n");
-
+	
+	// Unload all modules and libraries
+	NetCORE_Exit();
 	AuraCORE_Exit();
 	RendCORE_Exit();
+	GS_Exit();
 	C2D_Fini();
 	C3D_Fini();
 	hidExit();
@@ -110,13 +116,13 @@ void CJQ_MainMenuAssets_Init(CJQ_MainMenuAssets* obj)
 	// Top Main-Menu Screen
 	C2D_SpriteSetCenter(&obj->menu_main_top_spr.c2d_spr, 0.5f, 0.5f);
 	C2D_SpriteSetPos(&obj->menu_main_top_spr.c2d_spr, TOP_SCREEN_WIDTH/2, TOP_SCREEN_HEIGHT/2);
-	SprCJQ_RenderSprite_Init(&obj->menu_main_top_spr, TOP_SCREEN, RendLayer_BACKGND, INT16_MIN);
+	SprCJQ_RendSprite_Init(&obj->menu_main_top_spr, TOP_SCREEN, RendLayer_BACKGND, INT16_MIN);
 	C2D_SpriteFromSheet(&obj->menu_main_top_spr.c2d_spr, obj->menu_main_sheet, 0);
 	RendCORE_SprLyr_AppendSprite(&obj->menu_main_top_spr);
 	// Bottom Main-Menu Screen
 	C2D_SpriteSetCenter(&obj->menu_main_bot_spr.c2d_spr, 0.5f, 0.5f);
 	C2D_SpriteSetPos(&obj->menu_main_bot_spr.c2d_spr, BOTTOM_SCREEN_WIDTH/2, BOTTOM_SCREEN_HEIGHT/2);
-	SprCJQ_RenderSprite_Init(&obj->menu_main_bot_spr, BOT_SCREEN, RendLayer_BACKGND, INT16_MIN);
+	SprCJQ_RendSprite_Init(&obj->menu_main_bot_spr, BOT_SCREEN, RendLayer_BACKGND, INT16_MIN);
 	C2D_SpriteFromSheet(&obj->menu_main_bot_spr.c2d_spr, obj->menu_main_sheet, 1);
 	RendCORE_SprLyr_AppendSprite(&obj->menu_main_bot_spr);
 }
@@ -132,13 +138,13 @@ void CJQ_MainMenuAssets_Free(CJQ_MainMenuAssets* obj)
 
 void CJQ_MainMenuAssets_Show(CJQ_MainMenuAssets* obj)
 {
-	SprCJQ_RenderSprite_Show(&obj->menu_main_top_spr);
-	SprCJQ_RenderSprite_Show(&obj->menu_main_bot_spr);
+	SprCJQ_RendSprite_Show(&obj->menu_main_top_spr);
+	SprCJQ_RendSprite_Show(&obj->menu_main_bot_spr);
 }
 
 
 void CJQ_MainMenuAssets_Hide(CJQ_MainMenuAssets* obj)
 {
-	SprCJQ_RenderSprite_Hide(&obj->menu_main_top_spr);
-	SprCJQ_RenderSprite_Hide(&obj->menu_main_bot_spr);
+	SprCJQ_RendSprite_Hide(&obj->menu_main_top_spr);
+	SprCJQ_RendSprite_Hide(&obj->menu_main_bot_spr);
 }

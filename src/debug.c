@@ -17,6 +17,7 @@ s32 sock = -1, csock = -1;
 
 int Debug_Init(void)
 {
+	#ifdef ENABLE_3DSLINKIO // 3dslink and udsInit fight each other, so one may be open
 	int ret;
 	// start 3dslink with -s to see printf output on host
 
@@ -36,6 +37,7 @@ int Debug_Init(void)
 	atexit(Debug_SocShutdown);
 
 	link3dsStdio();
+	#endif
 
     return EXIT_SUCCESS;
 }

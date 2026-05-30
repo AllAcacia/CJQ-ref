@@ -43,6 +43,8 @@ void AuraCORE_Init(void)
     AuraCORE_AudioSlotsClear();
 
     AuraCORE_CharlesInit();
+
+    printf("Initialised AuraCORE\n");
 }
 
 
@@ -63,6 +65,8 @@ void AuraCORE_Exit(void)
     // Cleanup audio things and de-init platform features
     ndspExit();
     romfsExit();
+
+    printf("Exited AuraCORE\n");
 }
 
 

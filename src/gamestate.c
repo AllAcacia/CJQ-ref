@@ -28,9 +28,16 @@ static CJQ_GameState gamestate;
 static C3D_RenderTarget* TOP_SCREEN;
 static C3D_RenderTarget* BOT_SCREEN;
 
+static const u64 CJQ_APPLICATION_ID = 0x000400000ACA6400;                   // Ideally this is the appID I want :3
+static u16 CJQ_USERNAME_UTF16[USERNAME_LEN_MAX+1] = {0};                    // Username from system (utf-16)
+static u8 CJQ_USERNAME_UTF8[(UTF8_PER_UTF16_CMN*USERNAME_LEN_MAX)+1] = {0}; // Username from system (utf-8)
 
-void GS_Init(void)
+
+int GS_Init(void)
 {
+    // Initialize CFGU
+    cfguInit();
+
     // Initialize screens
 	GS_SetTimeSec(0);
 	GS_SetGameState(MODE_MENU);
@@ -47,6 +54,97 @@ void GS_Init(void)
     // Create screens
     TOP_SCREEN = C2D_CreateScreenTarget(GFX_TOP, GFX_LEFT);
 	BOT_SCREEN = C2D_CreateScreenTarget(GFX_BOTTOM, GFX_LEFT);
+
+    // Extract username from CFG Savegame
+    if (!GS_ExtractUsernameFromCFGU()) {
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
+}
+
+
+int GS_Exit(void)
+{
+    cfguExit();
+    return EXIT_SUCCESS;
+}
+
+
+int GS_ExtractUsernameFromCFGU(void)
+{
+    // Retrieve username from CFG savegame
+    u8 cjq_username_blk[CFG_USERNAME_BLKSIZE] = {0}; // Username blk from system
+    Result res = CFGU_GetConfigInfoBlk2(CFG_USERNAME_BLKSIZE, CFG_USERNAME_BLKID, cjq_username_blk);
+    if (R_FAILED(res)) {
+        printf("Failed to load CFG blk\n");
+        printf("summ =  %ld\n", R_SUMMARY(res));
+        printf("level = %ld\n", R_LEVEL(res));
+        printf("desc =  %ld\n", R_DESCRIPTION(res));
+        return EXIT_FAILURE;
+    }
+    
+    // Extract relevant bytes from the data blk
+    // utf-16
+    memcpy(CJQ_USERNAME_UTF16, (u16*)cjq_username_blk, USERNAME_LEN_MAX*sizeof(CJQ_USERNAME_UTF16[0]));
+    // utf-8
+    GS_Username_UTF16toUTF8(CJQ_USERNAME_UTF8, CJQ_USERNAME_UTF16);
+
+    return EXIT_SUCCESS;
+}
+
+
+void GS_Username_UTF16toUTF8(u8* usr_8, u16* usr_16)
+{
+    ssize_t ret = utf16_to_utf8(usr_8, usr_16, UTF8_PER_UTF16_CMN*USERNAME_LEN_MAX*sizeof(u8));
+
+    printf("Username (UTF-16): ");
+    GS_PrintAsHex_UTF16(CJQ_USERNAME_UTF16);
+    printf("Username  (UTF-8): ");
+    GS_PrintAsHex_UTF8(CJQ_USERNAME_UTF8);
+
+    if (ret < 0) {
+        printf("Error when converting utf16 to utf8\n");
+    } else {
+        printf("Converted UTF-16 characters for username to (%d) UTF-8 characters\n", ret);
+    }
+}
+
+
+u64 GS_GetApplicationID(void)
+{
+    return CJQ_APPLICATION_ID;
+}
+
+
+u8* GS_GetUsername_UTF8(void)
+{
+    return CJQ_USERNAME_UTF8;
+}
+
+
+u16* GS_GetUsername_UTF16(void)
+{
+    return CJQ_USERNAME_UTF16;
+}
+
+
+void GS_PrintAsHex_UTF8(u8* obj)
+{
+    for (int i = 0; obj[i] != 0; i++) {
+        printf("%02X ", (unsigned char)obj[i]);
+    }
+    printf("\n");
+}
+
+
+void GS_PrintAsHex_UTF16(u16* obj)
+{
+    for (int i = 0; obj[i] != 0; i++) {
+        u16 seg = obj[i];
+        printf("%02X%02X ", (seg >> 8) & 0xFF, seg & 0xFF);
+    }
+    printf("\n");
 }
 
 

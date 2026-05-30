@@ -19,12 +19,12 @@ int ProtoCJQ_Launch(void)
     RendCORE_Execute();
 
     // Load Card Assets
-    CJQ_RenderSprite card;
+    CJQ_RendSprite card;
     uint8_t element_i = CARD_FIRE;
     uint8_t rank_i = CARD_RANK_MIN;
     float card_x = (float)BOTTOM_SCREEN_WIDTH/2;
     float card_y = (float)BOTTOM_SCREEN_HEIGHT/2;
-    SprCJQ_RenderSprite_Init(&card, BOT_SCREEN, RendLayer_FRNTGND, 0);
+    SprCJQ_RendSprite_Init(&card, BOT_SCREEN, RendLayer_FRNTGND, 0);
     C2D_SpriteSheet cards_fire_sheet = C2D_SpriteSheetLoad(SPRITESHEET_PATH_CARDS_FIRE);
     C2D_SpriteSheet cards_water_sheet = C2D_SpriteSheetLoad(SPRITESHEET_PATH_CARDS_WATER);
     C2D_SpriteSheet cards_snow_sheet = C2D_SpriteSheetLoad(SPRITESHEET_PATH_CARDS_SNOW);

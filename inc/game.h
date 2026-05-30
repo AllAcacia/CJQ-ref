@@ -30,12 +30,13 @@
 #include "dynamicSS.h"
 #include "rendCORE.h"
 #include "auraCORE.h"
+#include "netCORE.h"
 
 
 typedef struct {
     C2D_SpriteSheet menu_main_sheet;
-    CJQ_RenderSprite menu_main_top_spr;
-    CJQ_RenderSprite menu_main_bot_spr;
+    CJQ_RendSprite menu_main_top_spr;
+    CJQ_RendSprite menu_main_bot_spr;
 } CJQ_MainMenuAssets;
 
 
